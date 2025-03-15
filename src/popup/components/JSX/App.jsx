@@ -65,7 +65,7 @@ const App = () => {
       }
       try {
         nextPageExists = await goToNextPage();
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1250));
         index++;
       } catch (error) {
         console.log("error", error);
@@ -110,7 +110,7 @@ const App = () => {
 
   // left off here 3/12 need to scrape off multiple pages
   return (
-    <div className="bg-[#272625] w-80 h-80 p-4  overflow-hidden relative">
+    <div className="bg-[#272625] w-80 h-96 p-4  overflow-hidden relative">
       <div>
         <div>
           <h1 className="text-white text-2xl">Maps Scraper</h1>
@@ -131,17 +131,18 @@ const App = () => {
             onClick={() => {
               console.log("Download button clicked");
               // Save as "data.csv"
-              saveArrayToCSV(searchResults, ["Place", "Address"], "data.csv");
+              saveArrayToCSV(searchResults, ["Place", "Location"], "data.csv");
             }}
           >
             Download
           </button>
         </div>
+        <p className="text-white">Total length of results: {searchResults.length}</p>
         <div>
           {/* list of search results */}
-          <ul className="mt-4 max-h-64 pb-12 overflow-auto">
+          <ul className="mt-4 max-h-64 pb-16 overflow-auto">
             {searchResults.map((result, index) => (
-              <li key={index} className="text-white">
+              <li key={index} className="text-white truncate">
                 {result[0]} - {result[1]}
               </li>
             ))}
