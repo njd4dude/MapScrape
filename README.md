@@ -1,3 +1,15 @@
-If you want to use this code you must have your own .env file with the api key. This has tailwind css implemented into it.
+## Quickstart Tutorial
 
-Note: buildjsx and servejsx is just to view live html and makes editing easier without having to refresh the extension everytime. The difference between the two is that webpack serve does not create a seperate folder, instead files are served directly from memory.
+### 1. Search for a Place  
+Search for the place you want, and it should appear in Google search results.  
+
+<img src="./public/tutorial/tut1.png" width="900">  
+
+➡️ Click on **"More places"**  
+
+---
+
+### 2. Open the Popup and Start Scraping  
+After clicking, you'll be taken to this page where you can open the popup and begin scraping.  
+
+<img src="./public/tutorial/tut2.png" width="900">

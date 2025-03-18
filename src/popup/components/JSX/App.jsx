@@ -153,7 +153,11 @@ const App = () => {
             onClick={() => {
               console.log("Download button clicked");
               // Save as "data.csv"
-              saveArrayToCSV(searchResults, ["Place", "Location"], "data.csv");
+              saveArrayToCSV(
+                searchResults,
+                ["Name", "Address", "Phone Number", "Website"],
+                "data.csv"
+              );
             }}
           >
             Download
