@@ -24,12 +24,10 @@
   },
   "contributors": [],
   "scripts": {
-    "dev": "",
-    "test": "",
     "build": "webpack --config webpack.config.js --mode=production",
-    "watchdogs": "webpack --config webpack.config.js --mode=development --watch --no-devtool",
-    "buildjsx": "webpack --config webpack.react.js --mode=development --watch --no-devtool",
-    "servejsx": "webpack serve --config webpack.react.js --mode=development"
+    "watch": "webpack --config webpack.config.js --mode=development --watch --no-devtool",
+    "buildReactIntoDist": "webpack --config webpack.react.js --mode=development --watch --no-devtool",
+    "serveReactFromMemory": "webpack serve --config webpack.react.js --mode=development"
   },
   "devDependencies": {
     "@babel/core": "^7.24.7",
