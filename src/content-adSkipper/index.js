@@ -1,5 +1,6 @@
 // Google Maps Scraping Functions
 function extractGoogleMapsSearchResults() {
+  console.log("SCRAPING");
   const results = [];
   document.querySelectorAll(".rllt__details").forEach((detail) => {
     const aTag = detail.closest("a");
@@ -23,6 +24,7 @@ function extractGoogleMapsSearchResults() {
 function googleGoToNextPage() {
   console.log("called googleGoToNextPage");
   const nextButton = document.querySelector("#pnnext");
+  console.log("nextButton", nextButton);
   if (nextButton) {
     nextButton.click();
     // sendResponse(true);
@@ -95,21 +97,14 @@ async function handleGoogleMapsScrape(message, sendResponse) {
 
       // Collect current page's results
       let scrapeResults = extractGoogleMapsSearchResults();
+      console.log("scrapeResults", scrapeResults);
       allResults = allResults.concat(scrapeResults); // Add results to the collection
 
       // Wait for the next page to load
-      res = await new Promise((resolve) => {
-        setTimeout(() => {
-          console.log("waiting 1 second");
-          resolve(googleGoToNextPage()); // Resolve the promise with the result of googleGoToNextPage
-        }, 1000);
-      });
+      res = googleGoToNextPage(); // Resolve the promise with the result of googleGoToNextPage
 
-      if (!res) {
-        console.log("Scraping last page");
-        let lastPageResults = extractGoogleMapsSearchResults();
-        allResults = allResults.concat(lastPageResults);
-      }
+      // wait a second before going to next page so that the scraper has enough time to scrape
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
 
     // IMPORTANT TASK: It doesn't get the last page
