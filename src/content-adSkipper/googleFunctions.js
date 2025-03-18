@@ -1,6 +1,10 @@
 // Google Maps Scraping Functions
+
+
+
+
 export async function extractGoogleMapsSearchResults() {
-  console.log("SCRAPING");
+  console.log("called extractGoogleMapsSearchResults");
   const results = [];
 
   try {

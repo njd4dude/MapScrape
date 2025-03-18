@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import icon from "/public/icons/128x128.png";
-import { use } from "react";
-
+// task: create scrape current page only button
 const App = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [isDoneScraping, setIsDoneScraping] = useState(false);
@@ -29,7 +27,7 @@ const App = () => {
     });
   }
 
-  async function scrapeCurrentPage() {
+  async function callContentScript(withCurrentPageOnly) {
     return new Promise((resolve, reject) => {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         console.log("tabs", tabs[0].url);
@@ -41,7 +39,7 @@ const App = () => {
 
         chrome.tabs.sendMessage(
           tabs[0].id,
-          { action: "get_search_results" },
+          { action: withCurrentPageOnly ? "get_current_page_results" : "get_search_results" },
           (response) => {
             if (response) {
               console.log("response", response);
@@ -62,7 +60,7 @@ const App = () => {
     do {
       console.log("new page", index);
       try {
-        let currentPageResults = await scrapeCurrentPage();
+        let currentPageResults = await callContentScript();
         console.log("currentPageResults", currentPageResults);
         setSearchResults((prevResults) => [
           ...prevResults,
@@ -83,14 +81,11 @@ const App = () => {
     setIsDoneScraping(true);
   }
 
-  async function scrape2() {
+  async function startScrape(withCurrentPageOnly = false) {
     try {
-      let currentPageResults = await scrapeCurrentPage();
-      console.log("currentPageResults", currentPageResults);
-      setSearchResults((prevResults) => [
-        ...prevResults,
-        ...currentPageResults,
-      ]);
+      let results = await callContentScript(withCurrentPageOnly);
+      console.log("results", results);
+      setSearchResults((prevResults) => [...prevResults, ...results]);
     } catch (error) {
       console.log("error", error);
     }
@@ -141,10 +136,19 @@ const App = () => {
             className="bg-[#3E3E3E] text-white px-4 py-2 rounded mt-4 mr-4"
             onClick={() => {
               console.log("Scrape button clicked");
-              scrape2();
+              startScrape();
             }}
           >
-            Scrape
+            Scrape All
+          </button>
+          <button
+            className="bg-[#3E3E3E] text-white px-4 py-2 rounded mt-4 mr-4"
+            onClick={() => {
+              console.log("Scrape current page only button clicked");
+              startScrape(true);
+            }}
+          >
+            Scrape Current Page
           </button>
 
           {/* download button */}

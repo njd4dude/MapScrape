@@ -9,7 +9,12 @@ function handleScraping(message, sendResponse) {
   const currentUrl = window.location.href;
   if (currentUrl.includes("yelp")) {
     handleYelpScrape(message, sendResponse);
-  } else if (currentUrl.includes("google")) {
+  } else if (
+    currentUrl.includes("google") &&
+    message.action === "get_current_page_results"
+  ) {
+    handleGoogleMapsScrapeCurrentPage(message, sendResponse);
+  } else {
     handleGoogleMapsScrape(message, sendResponse);
   }
 }
@@ -23,7 +28,14 @@ function handleYelpScrape(message, sendResponse) {
   }
 }
 
-// task 3/18: get detailed info
+export async function handleGoogleMapsScrapeCurrentPage(message, sendResponse) {
+  console.log("called In Google Maps Scrape Current Page");
+  if (message.action === "get_current_page_results") {
+    console.log("inside get_current_page_results");
+    let scrapeResults = await extractGoogleMapsSearchResults();
+    sendResponse(scrapeResults);
+  }
+}
 
 async function handleGoogleMapsScrape(message, sendResponse) {
   console.log("In Google Maps Scrape", message.action);
@@ -45,7 +57,7 @@ async function handleGoogleMapsScrape(message, sendResponse) {
     sendResponse(allResults);
   }
 }
-// a[.n1obkb mI8Pwc]
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   handleScraping(message, sendResponse);
   return true;
