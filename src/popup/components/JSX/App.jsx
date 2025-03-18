@@ -5,6 +5,7 @@ import { use } from "react";
 const App = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [isDoneScraping, setIsDoneScraping] = useState(false);
+  const [currentURL, setCurrentURL] = useState("");
 
   useEffect(() => {
     console.log("searchResults", searchResults);
@@ -31,6 +32,13 @@ const App = () => {
   async function scrapeCurrentPage() {
     return new Promise((resolve, reject) => {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        console.log("tabs", tabs[0].url);
+        if (tabs[0].url.includes("google")) {
+          setCurrentURL("Google");
+        } else if (tabs[0].url.includes("yelp")) {
+          setCurrentURL("Yelp");
+        }
+
         chrome.tabs.sendMessage(
           tabs[0].id,
           { action: "get_search_results" },
@@ -75,6 +83,20 @@ const App = () => {
     setIsDoneScraping(true);
   }
 
+  async function scrape2() {
+    try {
+      let currentPageResults = await scrapeCurrentPage();
+      console.log("currentPageResults", currentPageResults);
+      setSearchResults((prevResults) => [
+        ...prevResults,
+        ...currentPageResults,
+      ]);
+    } catch (error) {
+      console.log("error", error);
+    }
+    setIsDoneScraping(true);
+  }
+
   function saveArrayToCSV(data, headers, filename) {
     // Add headers as the first row in the CSV data
     const arrayWithHeaders = [headers, ...data];
@@ -110,7 +132,7 @@ const App = () => {
 
   // left off here 3/12 need to scrape off multiple pages
   return (
-    <div className="bg-[#272625] w-80 h-96 p-4  overflow-hidden relative">
+    <div className="bg-[#272625] w-80 h-auto p-4  overflow-hidden relative">
       <div>
         <div>
           <h1 className="text-white text-2xl">Maps Scraper</h1>
@@ -119,7 +141,7 @@ const App = () => {
             className="bg-[#3E3E3E] text-white px-4 py-2 rounded mt-4 mr-4"
             onClick={() => {
               console.log("Scrape button clicked");
-              scrape();
+              scrape2();
             }}
           >
             Scrape
@@ -137,7 +159,12 @@ const App = () => {
             Download
           </button>
         </div>
-        <p className="text-white">Total length of results: {searchResults.length}</p>
+        <p className="text-white text-right ">
+          Total length of results: {searchResults.length}
+        </p>
+        {!isDoneScraping && currentURL && (
+          <p className="text-white">Scraping {currentURL}...</p>
+        )}
         <div>
           {/* list of search results */}
           <ul className="mt-4 max-h-64 pb-16 overflow-auto">
