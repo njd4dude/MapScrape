@@ -9,6 +9,7 @@ export default {
     background: "./src/background/index.js",
     popup: "./src/popup/index.js",
     onboarding: "./src/onboardingPage/index.js",
+    sidepanel: "./src/sidepanel/index.js",
   },
   output: {
     path: path.resolve("dist"),
@@ -20,6 +21,11 @@ export default {
       template: "src/popup/index.html",
       filename: "popup.html",
       chunks: ["popup"],
+    }),
+    new HtmlWebpackPlugin({
+      template: "src/sidepanel/index.html",
+      filename: "sidepanel.html",
+      chunks: ["sidepanel"],
     }),
     new HtmlWebpackPlugin({
       template: "src/onboardingPage/index.html",

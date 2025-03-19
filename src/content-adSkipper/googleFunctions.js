@@ -29,10 +29,10 @@ export async function extractGoogleMapsSearchResults() {
 
         const name =
           document.querySelector('h2[data-attrid="title"] span')?.innerText ||
-          "Name not found";
-        const address = informationBlock[0]?.innerText || "Address not found";
+          "NA";
+        const address = informationBlock[0]?.innerText || "NA";
         const phoneNumber =
-          informationBlock[1]?.innerText || "Phone number not found";
+          informationBlock[1]?.innerText || "NA";
         const website = document.querySelector("a.n1obkb.mI8Pwc")?.href || "NA";
 
         console.log("name", name);

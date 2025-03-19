@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 // task: make side panel version
 const App = () => {
@@ -40,7 +39,11 @@ const App = () => {
 
         chrome.tabs.sendMessage(
           tabs[0].id,
-          { action: withCurrentPageOnly ? "get_current_page_results" : "get_search_results" },
+          {
+            action: withCurrentPageOnly
+              ? "get_current_page_results"
+              : "get_search_results",
+          },
           (response) => {
             if (response) {
               console.log("response", response);
@@ -83,6 +86,7 @@ const App = () => {
   }
 
   async function startScrape(withCurrentPageOnly = false) {
+    setIsDoneScraping(false);
     try {
       let results = await callContentScript(withCurrentPageOnly);
       console.log("results", results);
@@ -128,7 +132,7 @@ const App = () => {
 
   // left off here 3/12 need to scrape off multiple pages
   return (
-    <div className="bg-[#272625] w-80 h-auto p-4  overflow-hidden relative">
+    <div className="bg-[#272625] w-full h-screen p-4  overflow-hidden relative">
       <div>
         <div>
           <h1 className="text-white text-2xl">Maps Scraper</h1>
@@ -154,7 +158,7 @@ const App = () => {
 
           {/* download button */}
           <button
-            className={`bg-[#3E3E3E] text-white px-4 py-2 rounded mt-4 ${isDoneScraping && "animate-pulse bg-green-500"}`}
+            className={`bg-[#3E3E3E] text-white px-4 py-2 rounded mt-4 mr-4 ${isDoneScraping && "animate-pulse bg-green-500"}`}
             onClick={() => {
               console.log("Download button clicked");
               // Save as "data.csv"
@@ -167,6 +171,19 @@ const App = () => {
           >
             Download
           </button>
+          {/* Reset button */}
+          {isDoneScraping && (
+            <button
+              className="bg-[#ff1717] text-white px-4 py-2 rounded mt-4"
+              onClick={() => {
+                setSearchResults([]);
+                setIsDoneScraping(false);
+                setCurrentURL("");
+              }}
+            >
+              Clear Results
+            </button>
+          )}
         </div>
         <p className="text-white text-right ">
           Total length of results: {searchResults.length}
@@ -176,7 +193,7 @@ const App = () => {
         )}
         <div>
           {/* list of search results */}
-          <ul className="mt-4 max-h-64 pb-16 overflow-auto">
+          <ul className="mt-4  pb-16 overflow-auto">
             {searchResults.map((result, index) => (
               <li key={index} className="text-white truncate">
                 {result[0]} - {result[1]}

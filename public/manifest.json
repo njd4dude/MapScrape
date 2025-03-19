@@ -9,7 +9,7 @@
     "128": "icons/128x128.png"
   },
   "action": {
-    "default_popup": "popup.html"
+    "default_title": "click to open side panel"
   },
   "background": {
     "service_worker": "background.js"
@@ -23,5 +23,8 @@
       "js": ["content.js"]
     }
   ],
-  "permissions": ["tabs"]
+  "permissions": ["tabs", "sidePanel"],
+  "side_panel": {
+    "default_path": "sidePanel.html"
+  }
 }
