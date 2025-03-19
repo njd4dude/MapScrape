@@ -1,5 +1,6 @@
 // Yelp Scraping Functions
 export function extractYelpSearchResults() {
+  console.log("In Extract Yelp Search Results");
   const results = [];
   document
     .querySelectorAll('[data-traffic-crawl-id="OrganicBusinessResult"]')
@@ -14,12 +15,13 @@ export function extractYelpSearchResults() {
     });
   return results;
 }
-export function yelpGoToNextPage(sendResponse) {
+export function yelpGoToNextPage() {
+  console.log("In Yelp Go To Next Page");
   const nextButton = document.querySelector('a[aria-label="Next"]');
   if (nextButton) {
     nextButton.click();
-    sendResponse(true);
+    return true;
   } else {
-    sendResponse(false);
+    return false;
   }
 }

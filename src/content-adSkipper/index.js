@@ -7,7 +7,12 @@ import { extractYelpSearchResults, yelpGoToNextPage } from "./yelpFunctions.js";
 // Scraper Dispatcher
 function handleScraping(message, sendResponse) {
   const currentUrl = window.location.href;
-  if (currentUrl.includes("yelp")) {
+  if (
+    currentUrl.includes("yelp") &&
+    message.action === "get_current_page_results"
+  ) {
+    handleYelpScrapeCurrentPage(message, sendResponse);
+  } else if (currentUrl.includes("yelp")) {
     handleYelpScrape(message, sendResponse);
   } else if (
     currentUrl.includes("google") &&
@@ -18,13 +23,27 @@ function handleScraping(message, sendResponse) {
     handleGoogleMapsScrape(message, sendResponse);
   }
 }
+export async function handleYelpScrapeCurrentPage(message, sendResponse) {
+  if (message.action === "get_current_page_results") {
+    let scrapeResults = extractYelpSearchResults();
+    sendResponse(scrapeResults);
+  }
+}
 
-function handleYelpScrape(message, sendResponse) {
+async function handleYelpScrape(message, sendResponse) {
   console.log("In Yelp Scrape");
   if (message.action === "get_search_results") {
-    sendResponse(extractYelpSearchResults());
-  } else if (message.action === "go_to_next_page") {
-    yelpGoToNextPage(sendResponse);
+    let allResults = [];
+    let res = true;
+
+    while (res) {
+      let scrapeResults = extractYelpSearchResults();
+      allResults = allResults.concat(scrapeResults);
+      res = yelpGoToNextPage();
+      // wait a second before going to next page so that the scraper has enough time to scrape
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+    }
+    sendResponse(allResults);
   }
 }
 

@@ -9,24 +9,6 @@ const App = () => {
     console.log("searchResults", searchResults);
   }, [searchResults]);
 
-  function goToNextPage() {
-    return new Promise((resolve, reject) => {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.tabs.sendMessage(
-          tabs[0].id,
-          { action: "go_to_next_page" },
-          (response) => {
-            if (response) {
-              resolve(response); // Resolving the promise with the response
-            } else {
-              reject("No response received. End of results."); // Rejecting if no response
-            }
-          }
-        );
-      });
-    });
-  }
-
   async function callContentScript(withCurrentPageOnly) {
     return new Promise((resolve, reject) => {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -55,34 +37,6 @@ const App = () => {
         );
       });
     });
-  }
-
-  // task: fix it so it doesnt create duplicates: right not temporary fix is putting it at 1 second delay. another solution could be filtering out duplicates.
-  async function scrape() {
-    let nextPageExists = true;
-    let index = 0;
-    do {
-      console.log("new page", index);
-      try {
-        let currentPageResults = await callContentScript();
-        console.log("currentPageResults", currentPageResults);
-        setSearchResults((prevResults) => [
-          ...prevResults,
-          ...currentPageResults,
-        ]);
-      } catch (error) {
-        console.log("error", error);
-      }
-      try {
-        nextPageExists = await goToNextPage();
-        await new Promise((resolve) => setTimeout(resolve, 1250));
-        index++;
-      } catch (error) {
-        console.log("error", error);
-        nextPageExists = false;
-      }
-    } while (nextPageExists == true);
-    setIsDoneScraping(true);
   }
 
   async function startScrape(withCurrentPageOnly = false) {
@@ -132,7 +86,7 @@ const App = () => {
 
   // left off here 3/12 need to scrape off multiple pages
   return (
-    <div className="bg-[#272625] w-full h-screen p-4  overflow-hidden relative">
+    <div className="bg-[#272625] w-full h-screen p-4 overflow-auto relative">
       <div>
         <div>
           <h1 className="text-white text-2xl">Maps Scraper</h1>
